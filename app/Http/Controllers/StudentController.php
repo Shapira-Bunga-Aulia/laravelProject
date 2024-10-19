@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Student;
 use Illuminate\Http\Request;
 
@@ -95,6 +96,32 @@ class StudentController extends Controller
 
 
             return redirect()->route('student.home')->with('success', 'Berhasil mengubah data obat!');
+    }
+
+    public function updateStock(Request $request, $id)
+    {
+        $studentBefore = Student::where('id', $id)->first();
+        // validasi tidak dapat digunakan jika form disimpan dimodal dan tidak mengunakan ajax, penggantinya dengan isset
+        if(!isset($request->rombel)) {
+            return redirect()->back()->with([
+                'failed' => 'pastikan rombel disini',
+                 'id' => $id,
+                  'name' => $studentBefore['name'],
+                   'rombel' => $studentBefore['rombel'],
+        ]);
+        }
+        // stock input tidak boleh kurang dari stock sebelumnya
+        if ((string)$request->rombel < (string)$studentBefore['rombel']) {
+            return redirect()->back()->with([
+                'failed' => 'rombel baru tidak boleh sama dari rombel sebelumnnya!',
+                'id' => $id,
+                'name' => $studentBefore['name'],
+                'rombel' => $studentBefore['student'],
+            ]);
+        }
+        // jika tidak kosong atau stok baru input lebih dari sebelumnya data diupdate
+        $studentBefore->update(['rombel' => $request->rombel]);
+        return redirect()->back()->with('success', 'Berhasil mengubah data rombel siswa!');
     }
 
 

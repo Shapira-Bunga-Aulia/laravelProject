@@ -13,7 +13,7 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'students',
-        'name_strudent',
+        'name_student',
         'total_nis',
     ];
 
